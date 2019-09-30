@@ -6,6 +6,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import formataddr
 from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 
 sender = 'x@163.com'
 pwd = 'x' #开通邮箱服务后，设置的客户端授权密码
@@ -22,12 +23,17 @@ message['Subject'] = Header(subject, 'utf-8')
 #邮件正文内容
 message.attach(MIMEText('附件邮件正文内容','plain','utf-8'))
 
-#构造附件1
+#构造文本附件1
 att1 = MIMEText(open("README.md").read(),"base64","utf-8")
 att1["Content-Type"] = "application/octet-stream"
-att1["Content-Disposition"] = 'attachment; filename="first.py"'
-
+att1["Content-Disposition"] = 'attachment; filename="REAMME.md"'
 message.attach(att1)
+
+#构造二进制附件2
+att2 = MIMEApplication(open("搞笑.mp4","rb").read()) #打开二进制文件要指定"rb"模式！
+#MIMEApplication默认子类型即为"application/octet-stream"。如果想省事，可所有类型的附件都用MIMEApplication
+att2.add_header("Content-Disposition","attachment",filename=("gbk","","搞笑.mp4"))  #发送中文名附件需要指定gbk编码
+message.attach(att2)
 
 try:
     # 使用非本地服务器，需要建立ssl连接
